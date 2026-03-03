@@ -2,9 +2,7 @@ package javaTest;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -13,20 +11,24 @@ public class Java17 {
 	
 	public void duplciateElementInList() {
 		// Creating a list of Even Numbers
-		List<Integer> EvenNumbers = Arrays.asList(2, 4, 6, 8, 4, 2);
+		List<Integer> evenNumbers = Arrays.asList(2, 4, 6, 8, 4, 2);
 		// distinct (unique) example
-		List<Integer> deduped = EvenNumbers.stream().distinct().toList();
-		deduped.forEach(i -> System.out.println("unique element: "+ i));
-		
-		LinkedHashSet<Integer> linkedHashset = new LinkedHashSet<Integer>(EvenNumbers);
+		List<Integer> uniqueList = evenNumbers.stream().distinct().toList();
+        uniqueList.forEach(i -> System.out.println("unique element: "+ i));
+        // get unique value from list
+        Set<Integer> uniqueGas = new HashSet<Integer>(evenNumbers);
+        //	uniqueGas.stream().forEach(System.out::println);
+        System.out.println("By Using set, unique element count: " + uniqueGas.size());
+
+		LinkedHashSet<Integer> linkedHashset = new LinkedHashSet<Integer>(evenNumbers);
 		List<Integer> myArrayList = new ArrayList<Integer>(linkedHashset);
-		myArrayList.forEach(e -> System.out.println("In linkedHashset, arralylist unique element: " + e));
+		myArrayList.forEach(e -> System.out.println("In linkedHashset, array list unique element: " + e));
 		
 		//Start Example of CopyOnWriteArrayList
 		List<String> list = new CopyOnWriteArrayList<String>();
 		list.add("2");list.add("4");list.add("6");list.add("8");list.add("4");
-		Iterator<String> iter = list.iterator();
-		/*while(iter.hasNext()) {
+    /*  Iterator<String> iter = list.iterator();
+		while(iter.hasNext()) {
 			String value = iter.next();*/
         for (String value : list) {
 			if(value.equals("4")) {
@@ -40,13 +42,10 @@ public class Java17 {
 		
 		// find duplicate value in list
 		Set<Integer> set = new HashSet<Integer>();
-		EvenNumbers.stream().filter(e -> !set.add(e)).collect(Collectors.toSet()).
-		forEach(duplicate -> System.out.println("Duplicate element: " + duplicate));
-		
-		// get unique value from list 
-		Set<Integer> uniqueGas = new HashSet<Integer>(EvenNumbers);
-	//	uniqueGas.stream().forEach(System.out::println);
-		System.out.println("By Using set, unique element count: " + uniqueGas.size());
+		evenNumbers.stream().filter(e -> !set.add(e))
+            .collect(Collectors.toSet())
+            .forEach(duplicate -> System.out.println("Duplicate element: " + duplicate));
+
 	}
 
 	public void flatMapMethod() {
@@ -64,35 +63,31 @@ public class Java17 {
 		}
 		
 		// Creating a list of Prime Numbers
-		List<Integer> PrimeNumbers = Arrays.asList(5, 7, 11, 13);
+		List<Integer> primeNumbers = Arrays.asList(5, 7, 11, 13);
 		// Creating a list of Odd Numbers
-		List<Integer> OddNumbers = Arrays.asList(1, 3, 5);
+		List<Integer> oddNumbers = Arrays.asList(1, 3, 5);
 		// Creating a list of Even Numbers
-		List<Integer> EvenNumbers = Arrays.asList(2, 4, 6, 8, 4, 2);
-		EvenNumbers = EvenNumbers.stream()
+		List<Integer> evenNumbers = Arrays.asList(2, 4, 6, 8, 4, 2);
+		evenNumbers = evenNumbers.stream()
 				.peek(s -> System.out.println("list value : "+ s)).distinct()
 				.peek(s -> System.out.println("unique list value : "+ s))
 				.collect(Collectors.toList());
-		List<List<Integer>> listOfListofInts = Arrays.asList(PrimeNumbers, OddNumbers, EvenNumbers);
+		List<List<Integer>> listOfListofInts = Arrays.asList(primeNumbers, oddNumbers, evenNumbers);
 		System.out.println("The Structure before flattening is : " + listOfListofInts);
 
 		// Using flatMap for transferFormating and flattening.  
 		List<Integer> listofInts = listOfListofInts.stream().flatMap(Collection::stream)
 				.peek(data -> System.out.println("peek "+data))
 				.toList();
-
 		System.out.println("The Structure after flattening is : " + listofInts);
 
 		List<String> citylist = extractedMapUpperCase();
-
 		System.out.println("Flat Map");
 		citylist.stream().flatMap(num -> Stream.of(num)).forEach(System.out::println);
 
 		System.out.println();
-		
 		List<List<String>> subList = Arrays.asList(List.of("a"), List.of("b"));
 		System.out.println("subList : "+ subList);
-
 		System.out.println(subList.stream().flatMap(Collection::stream).collect(Collectors.toList()));
 
 		List<String> list1 = Arrays.asList("5.6", "7.4", "4", "1", "2.3");
@@ -124,14 +119,13 @@ public class Java17 {
 		System.out.println("Avg :" +avg);
 		System.out.println("After time :" +LocalDateTime.now());
 		System.out.println("Before time :" +LocalDateTime.now());
-		List<Integer> listOfNumbers = Arrays.stream(arr).boxed().toList();
+		Arrays.stream(arr).boxed().toList().forEach(e -> System.out.print("listOfNumbers : " + e + " "));
 
 		List<Integer> list = new ArrayList<Integer>(Arrays.asList(1,2,3,4,5,6,7,8,9)) ;
 
         OptionalDouble doubleOpt = OptionalDouble.of(list.parallelStream().map(i ->(i%2!=0)? i++:i).mapToInt(Integer::intValue).average().getAsDouble());
         double avgD = doubleOpt.getAsDouble();
         System.out.println("Avg :" +avgD);
-
 		System.out.println("After time :" +LocalDateTime.now());
 		
 	}
@@ -158,7 +152,8 @@ public class Java17 {
 		List<String> citylist = Stream.of("delhi", "mumbai", "hyderabad", "ahmedabad", "indore", "patna")
 				.map(String::toUpperCase).collect(Collectors.toList());
 		System.out.println("upperCase MAP list : " + citylist);
-		citylist.stream().filter(s -> s.length() > 5).forEach(name -> System.out.print(name + " "));
+		citylist.stream().filter(s -> s.length() > 5)
+                .forEach(name -> System.out.print(name + " "));
 
 		System.out.println();
 		
@@ -166,7 +161,7 @@ public class Java17 {
 		
 		System.out.println("use map");
 		citylist.stream()
-		.peek(data -> System.out.println("log in stream by peek() method "+data))
+		.peek(data -> System.out.println("log in stream by peek() method " + data))
 		.map(s -> {
 			return s.substring(2);
 		}).toList().forEach(e -> System.out.print("substring after 2nd index, name : " + e));
@@ -185,10 +180,9 @@ public class Java17 {
 		System.out.println("match value in list: " + flag);
 
 		List<Integer> intStream = Arrays.asList(12, 45, 67, 19, 87, 2, 9);
-
-		System.out.println("Number of elements in stream=" + (long) intStream.size());
-		System.out.println("Stream contains all elements less than 50 :  "+intStream.stream().allMatch(i -> i<50)
-				+ " :: Stream contains any elements great than 50 : " +intStream.stream().anyMatch(i -> i>50) + " :: ");
+		System.out.println("Number of elements in stream=" + intStream.size());
+		System.out.println("Stream contains all elements less than 50 :  "+ intStream.stream().allMatch(i -> i<50)
+				+ " :: Stream contains any elements great than 50 : " + intStream.stream().anyMatch(i -> i>50) );
 		
 		Integer[] intArray = intStream.toArray(Integer[]::new);
 		System.out.println("list to Array object : " + Arrays.toString(intArray));
@@ -205,20 +199,22 @@ public class Java17 {
 
 		consumeMain();
 		try {
-			getComeltableFutureOperatrion();
+            getCompletableFutureOperation();
 		} catch (InterruptedException | ExecutionException e1) {
 			System.err.println(e1.getMessage());
 		}
 	}
 
-	public static void getComeltableFutureOperatrion() throws InterruptedException, ExecutionException {
+	public static void getCompletableFutureOperation() throws InterruptedException, ExecutionException {
 		System.out.println();
-		CompletableFuture<String> completableFuture
-		  = CompletableFuture.supplyAsync(() -> "Hello");
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+
+        CompletableFuture<String> completableFuture
+		  = CompletableFuture.supplyAsync(() -> "Hello", executor);
 		System.out.println("completableFuture--> " + completableFuture.get());
 
 		CompletableFuture<String> future = completableFuture
-				.thenApply(s -> s + " World");
+				.thenApply(s -> s + " Kapil");
 		System.out.println("completableFuture thenApply --> " + future.get());
 		
 		CompletableFuture<Void> future1 = future
@@ -227,22 +223,35 @@ public class Java17 {
 
 		System.out.println("completableFuture accept then run--> " + future1.get());
 		
-		CompletableFuture<String> future2 = completableFuture
-				.thenApply(s -> s + " Good Morning");
-		CompletableFuture<String> combinedFuture 
-      = future.thenCombine( 
-      		future2, (m1, m2) -> m1 + " " + m2); 
-
-		System.out.println("completableFuture thenCombine  "+ combinedFuture.get()); 
+		CompletableFuture<String> future2 = completableFuture.thenApply(s -> s + " Good Morning");
+		CompletableFuture<String> combinedFuture = future.thenCombine(
+      		future2, (m1, m2) -> m1 + " " + m2);
+		System.out.println("completableFuture thenCombine  "+ combinedFuture.join());
 		
 		CompletableFuture<Integer> resultFuture 
         = CompletableFuture.supplyAsync(() -> 10 / 0)   
-                  .exceptionally(ex -> 0); 
-    
+                  .exceptionally(ex -> 0);
       // 0 - returned by exceptionally block 
-		System.out.println(resultFuture.get()); 
-		
-	}
+		System.out.println(resultFuture.get());
+        resultFuture = CompletableFuture.supplyAsync(() -> 10/0)
+            .handle((result, ex) -> {
+                if (ex != null) {
+                    System.out.println("Exception occurred: " + ex.getMessage());
+                    return 0; // Return a default value in case of exception
+                }
+                return result;
+            });
+        System.out.println(resultFuture.join());
+
+        CompletableFuture.supplyAsync(() -> "Hello")
+            .whenComplete((result, error) -> {
+                if (error == null) {
+                    System.out.println(result);
+                } else {
+                    error.printStackTrace();
+                }
+            });
+    }
 	
 	
 	private static void optionalValue(List<String> citylist) {
@@ -267,13 +276,9 @@ public class Java17 {
 		Consumer<List<Integer>> dispList = list -> list.forEach(a -> System.out.print(a + " "));
 
 		List<Integer> list = new ArrayList<Integer>();
-		list.add(2);
-		list.add(1);
-		list.add(3);
-		// Implement modify using accept()
-		modify.accept(list);
-		// Implement dispList using accept()
-		dispList.accept(list);
+		list.add(2); list.add(1); list.add(3); list.add(5);
+        modify.accept(list); // Implement modify using accept()
+		dispList.accept(list); // Implement dispList using accept()
 		System.out.println("\n modify , display and accept list");
 		modify.andThen(dispList).accept(list);
 	}

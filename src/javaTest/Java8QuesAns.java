@@ -234,7 +234,7 @@ public class Java8QuesAns {
                 .collect(Collectors.groupingBy(
                         c -> c, LinkedHashMap::new, Collectors.counting()))
                 .entrySet().stream()
-                .filter(e -> e.getValue() == 1)
+                .filter(entry -> entry.getValue() == 1)
                 .map(Map.Entry::getKey)
                 .findFirst()
               //  .orElse(null);

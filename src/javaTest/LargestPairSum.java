@@ -2,10 +2,7 @@ package javaTest;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -68,6 +65,32 @@ public class LargestPairSum {
         System.out.println("Starting index " + start);
         System.out.println("Ending index " + end);
     }
+    public static void findSubarrays(int[] arr, int target) {
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        int prefixSum = 0;
+
+        // Important: To handle subarray starting from index 0
+        map.put(0, new ArrayList<>(Arrays.asList(-1)));
+
+        for (int i = 0; i < arr.length; i++) {
+            prefixSum += arr[i];
+
+            // Check if there is a prefixSum - target
+            if (map.containsKey(prefixSum - target)) {
+                List<Integer> startIndexes = map.get(prefixSum - target);
+                for (int start : startIndexes) {
+                    System.out.println("Subarray found from index "
+                            + (start + 1) + " to " + i);
+                    System.out.println("Subarray with sum " + target + " found: " +
+                            Arrays.toString(Arrays.copyOfRange(arr, start+1, i+1)));
+                }
+            }
+
+            // Store current prefixSum
+            map.putIfAbsent(prefixSum, new ArrayList<>());
+            map.get(prefixSum).add(i);
+        }
+    }
 
     // O(n) time, O(n) space.
     public static void findSubarrayWithSum(int[] arr, int k) {
@@ -120,7 +143,10 @@ public class LargestPairSum {
         arr = new int[]{3, 4, -7, 1, 3, 3, 1, -4};
         int k = 7;
         findSubarrayWithSum(arr, k);
+        arr = new int[] {1, 4, 20, 3, 10, 5};
+        int target = 33;
 
+        findSubarrays(arr, target);
         testZonedDateTime();
         
 	}

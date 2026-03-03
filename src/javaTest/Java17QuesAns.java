@@ -56,7 +56,7 @@ public class Java17QuesAns {
         // Write a program to count and print the number of elements in a list.
         System.out.println("program to count and print the number of elements in a list");
         List<String> words = Arrays.asList("apple", "banana", "pear");
-       long count = Stream.of("apple", "banana", "pear",1,true).count();
+        long count = Stream.of("apple", "banana", "pear",1,true).count();
 
         System.out.println("Count of list element : "+count);
 
@@ -65,18 +65,15 @@ public class Java17QuesAns {
         numbers = Arrays.asList(1, 2, 3, 4);
         int sumList = numbers.stream().reduce(0, Integer::sum);
         Optional<Integer> sumOptional = numbers.stream().reduce(Integer::sum);
-     //   sumList = sumOptional.isPresent()?sumOptional.get():0;
         sumList = sumOptional.orElse(0);
-
         System.out.println("reduce method of get sum : "+sumList);
         sumList = numbers.stream().mapToInt(i -> i).sum();
         System.out.println("Sum method with maptoInt : "+sumList);
-
         sumList = numbers.stream().mapToInt(Integer::intValue).sum();
-
         System.out.println("Sum method with maptoInt : "+sumList);
         sumList = (int) numbers.stream().collect(Collectors.summarizingInt(Integer::intValue)).getSum();
         System.out.println("Sum of list element : "+sumList);
+
         DoubleSummaryStatistics doubleSummaryStatistics = numbers.stream().collect(Collectors.summarizingDouble(Integer::intValue ));
         System.out.println("Result of doubleSummaryStatistics for list , sum: "+doubleSummaryStatistics.getSum() + ", average::"+ doubleSummaryStatistics.getAverage()
         +" ,max:" + doubleSummaryStatistics.getMax()+", count:"+doubleSummaryStatistics.getCount());
@@ -95,6 +92,7 @@ public class Java17QuesAns {
         System.out.println("program to print names sorted in alphabetical order from a list");
         List<String> names = Arrays.asList("Charlie", "Alice", "Bob", "Kapil");
         names.stream().sorted().forEach(System.out::println);
+        names.stream().sorted(Comparator.reverseOrder()).forEach(System.out::println);
         System.out.println("program to print names sorted in alphabetical reverse order from a list");
         names.stream().sorted(Comparator.comparing(String::length)).forEach(e-> System.out.println("Element for sorted length :"+e));
 
@@ -188,10 +186,10 @@ public class Java17QuesAns {
         
          //Palindrome program using reams
          System.out.println("program to check if string is Palindrome or not");
-         String palinStr = "ROTATOR";
-         boolean isItPalindrome = IntStream.range(0, palinStr.length()/2).
-	                noneMatch(i -> palinStr.charAt(i) != palinStr.charAt(palinStr.length() - i -1));
-         System.out.println(palinStr + " is Palindrome,:" + isItPalindrome);
+         String palindromStr = "ROTATOR";
+         boolean isItPalindrome = IntStream.range(0, palindromStr.length()/2).
+	                noneMatch(i -> palindromStr.charAt(i) != palindromStr.charAt(palindromStr.length() - i -1));
+         System.out.println(palindromStr + " is Palindrome,:" + isItPalindrome);
          System.out.println("program to extract duplicate elements from an array");
 
          List<Integer> listOfIntegers = Arrays.asList(111, 222, 333, 111, 555, 333, 777, 222);
