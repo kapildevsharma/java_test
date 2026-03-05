@@ -18,9 +18,7 @@ public class Solution {
 		System.out.println("Each Character with count: " + noOfCharWithTotalCount);
 
 		int[] arr = { 5, 2, 8, 1, 3 };
-
 		// Arrays.sort(arr);
-		
 		// sorting with bubble sort only for small dataSets
 		int[] bubbleSortedArr = sortingArrayWithBubbleSort(arr);
 		System.out.println("Sorting array with bubble sort : " +Arrays.toString(bubbleSortedArr));

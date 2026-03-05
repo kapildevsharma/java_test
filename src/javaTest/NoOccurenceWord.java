@@ -13,7 +13,7 @@ public class NoOccurenceWord {
 		String str= "welcome to kapil decode and decodee kapil to welcome";
 		List<String> list = Arrays.asList(str.split(" "));
 		Map<String, Long> map =  list.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-		map.entrySet().forEach(e -> System.out.println(e.getKey() + ":: " + e.getValue() ));
+		map.forEach((key, value) -> System.out.println(key + ":: " + value));
 		System.out.println(map);
 		map =   list.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
 		System.out.println(map);

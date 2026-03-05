@@ -10,14 +10,14 @@ public class PartionEqualSubsetSumProblem
 	        int totalSum=0;
 	        for(int num:nums)
 	            totalSum+=num;
-	        
-	        if(totalSum%2 == 0)
-	        {//check if there is a subset with sum=totalSum/2
-	            int target=totalSum/2;
+
+            //check if there is a subset with sum=totalSum/2
+	        if(totalSum % 2 == 0){
+	            int target = totalSum / 2;
 	            int[][] dp=new int[nums.length][target+1];
 	            for(int[] row:dp)
 	                Arrays.fill(row,-1);
-	            return findSumTarget(nums.length-1,target,nums,dp);
+	            return findSumTarget(nums.length-1, target, nums, dp);
 	        }
 	        return false;
 	    }

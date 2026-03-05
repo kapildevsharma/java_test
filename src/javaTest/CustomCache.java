@@ -7,6 +7,17 @@ import java.util.concurrent.locks.ReentrantLock;
 public class CustomCache {
 
     // Inner Entity class
+    private record Entity(String value, long expireAt) {
+        private Entity(String value, long expireAt) {
+            this.value = value;
+            this.expireAt = System.currentTimeMillis() + expireAt;
+        }
+        boolean isExpired() {
+                return System.currentTimeMillis() > expireAt;
+            }
+    }
+
+/*
     private static class Entity {
         private final String value;
         private final long expireAt;
@@ -19,6 +30,7 @@ public class CustomCache {
             return System.currentTimeMillis() > expireAt;
         }
     }
+*/
 
     // Thread-safe map
     private final ConcurrentHashMap<String, Entity> cacheMap = new ConcurrentHashMap<>();
