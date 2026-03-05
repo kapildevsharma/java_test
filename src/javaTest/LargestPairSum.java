@@ -93,27 +93,31 @@ public class LargestPairSum {
     }
 
     // O(n) time, O(n) space.
-    public static void findSubarrayWithSum(int[] arr, int k) {
-        System.out.println("Finding subarray with sum " + k + " in arr[] "+ Arrays.toString(arr));
+    public static void findSubarrayWithSum(int[] arr, int sum) {
+        System.out.println("Finding subarray with sum " + sum + " in arr[] "+ Arrays.toString(arr));
         Map<Integer, Integer> prefixSumMap = new HashMap<>();
-        int sum = 0;
+        int currSum  = 0;
         prefixSumMap.put(0, -1); // Base case: sum=0 before array starts
 
-        for (int i = 0; i < arr.length; i++) {
-            sum += arr[i];
+        for (int index = 0; index < arr.length; index++) {
+            currSum  += arr[index];
 
-            if (prefixSumMap.containsKey(sum - k)) {
-                int start = prefixSumMap.get(sum - k) + 1;
-                int end = i;
-                System.out.println("Subarray with sum " + k + " found: " +
-                        Arrays.toString(Arrays.copyOfRange(arr, start, end + 1)));
+            if(currSum == sum) {
+                System.out.println("Subarray 0 to " + index);
+            }
+
+            if (prefixSumMap.containsKey(currSum - sum)) {
+                int start = prefixSumMap.get(currSum - sum) + 1;
+                System.out.println("Subarray " + ( prefixSumMap.get(currSum - sum) + 1 ) + " to " + index);
+                System.out.println("Subarray with sum " + sum + " found: " +
+                        Arrays.toString(Arrays.copyOfRange(arr, start, index + 1)));
                 return;
             }
             // Store the first occurrence of this sum
-            prefixSumMap.putIfAbsent(sum, i);
+            prefixSumMap.putIfAbsent(currSum , index);
         }
 
-        System.out.println("No subarray with sum " + k + " found.");
+        System.out.println("No subarray with sum " + sum + " found.");
     }
 
 	public static void main(String[] args) {
@@ -134,21 +138,23 @@ public class LargestPairSum {
 		list = Arrays.asList(5, 9, 7, 11);
 		
         System.out.println(findMaxSum(list));
-        getHashMapMethod();
+
         System.out.println(findMaxSumSubarray(arr));
 
         System.out.println("----Finding max sum with start and end index----");
         findMaxSumWithStartEndIndex(new int[] {-2, -3, 4, -1, -2, 1, 5, -3});
 
         arr = new int[]{3, 4, -7, 1, 3, 3, 1, -4};
-        int k = 7;
-        findSubarrayWithSum(arr, k);
+        int sum = 7;
+        findSubarrayWithSum(arr, sum);
         arr = new int[] {1, 4, 20, 3, 10, 5};
         int target = 33;
 
         findSubarrays(arr, target);
         testZonedDateTime();
-        
+
+        getHashMapMethod();
+
 	}
 	
 	public static void testZonedDateTime() {
@@ -165,18 +171,16 @@ public class LargestPairSum {
 	
 	public static void getHashMapMethod() {
 		 Map<String, String> map = new HashMap<>();
-	        map.put("Name", "Aman");
+	        map.put("Name", "Kapil");
 	        map.put("Address", "Kolkata");
 	  
 	        // Print the map
 	        System.out.println("Map: " + map);
-	  
-	        // remap the values using compute() method
+	       // remap the values using compute() method
 	        map.compute("Name", (key, val)
-	                                -> val.concat(" Singh"));
+	                                -> val.concat(" Sharma"));
 	        map.compute("Address", (key, val)
 	                                   -> val.concat(" West-Bengal"));
-	  
 	        // print new mapping
 	        System.out.println("New Map: " + map);
 	}

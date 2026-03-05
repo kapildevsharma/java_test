@@ -1,5 +1,7 @@
 package com.Test;
 
+import java.util.Objects;
+
 public class Person implements Cloneable {
     private String firstName;
     private String lastName;
@@ -20,12 +22,17 @@ public class Person implements Cloneable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Person)) return false;
 
         Person person = (Person) o;
+        // Handles nulls automatically:  Objects.equals(null, null) → true
+        return Objects.equals(firstName, person.firstName) &&
+                Objects.equals(lastName, person.lastName);
+    }
 
-        if (!firstName.equals(person.firstName)) return false;
-        return lastName.equals(person.lastName);
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName); // determines bucket
     }
 
     // omitting other methods for brevity

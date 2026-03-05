@@ -20,14 +20,11 @@ public class FindDuplicate {
 		
 		System.out.println("printFirstNonRepeatingChar : "+ printFirstNonRepeatingChar("abca"));
 
-		
 		int arr[] = { 1, 2, 3, 1, 3, 6, 6 };
 		arr = new int[] { 12, 11, 40, 12, 5, 6, 5, 12, 11 };
-		int arr_size = arr.length;
 
-		findDuplicates(arr, arr_size);
-
-		printRepeating(arr, arr_size);
+		findDuplicates(arr);
+		printRepeating(arr);
 	}
 
 	private static Character printFirstNonRepeatingChar(String string) {
@@ -53,11 +50,11 @@ public class FindDuplicate {
 		return null;
 	}
 
-	static void findDuplicates(int arr[], int len) {
+	static void findDuplicates(int arr[]) {
 
 		Set<Integer> duplicates = new HashSet<Integer>();
 		for (int i = 0; i < arr.length; i++) {
-			for (int j = 1; j < arr.length; j++) {
+			for (int j = i + 1; j < arr.length; j++) {
 				if (arr[i] == arr[j] && i != j) {
 					duplicates.add(arr[i]);
 					break;
@@ -65,33 +62,39 @@ public class FindDuplicate {
 			}
 		}
 
-		System.out.println("Element in array is : " + duplicates);
+		System.out.println("Duplicates Element in array is : " + duplicates);
 
-		Set<Integer> dupes = new HashSet<Integer>();
-		for (int i : arr) {
-			if (!dupes.add(i)) {
-				System.out.println("Duplicate element in array is : " + i);
+		Set<Integer> seen = new HashSet<Integer>();
+		for (int num : arr) {
+			if (!seen.add(num)) {
+                duplicates.add(num);
+				System.out.println("Duplicate element: " + num);
 			}
 		}
+        System.out.println("Duplicates element in array is : " + duplicates);
 
-	}
+
+    }
 
 	//arr = new int[] { 12, 11, 40, 12, 5, 6, 5, 12, 11 };
+	static void printRepeating(int[] arr) {
+        int size = arr.length;
 
-	
-	static void printRepeating(int[] arr, int size) {
-		int i;
+        int i;
 		System.out.println("The repeating elements are count");
 		ConcurrentHashMap<Integer, Integer> repeatElementCount = new ConcurrentHashMap<>();
 		for (i = 0; i < size; i++) {
-			if(repeatElementCount.containsKey(arr[i])) {
+			/*if(repeatElementCount.containsKey(arr[i])) {
 				System.out.println("Update Value of Elements : " + arr[i]+" "+i);
 				repeatElementCount.replace(arr[i], repeatElementCount.get(arr[i])+1);
 			}else {
 				System.out.println("Add Value of Elements : " + arr[i]+" "+i);
 				repeatElementCount.put(arr[i], 1);
-			}
-		}
+			}*/
+
+            repeatElementCount.put(arr[i], repeatElementCount.getOrDefault(arr[i], 0) + 1);
+
+        }
 		for(Map.Entry<Integer, Integer> entry : repeatElementCount.entrySet()) {
 			if(entry.getValue()>1) {
 				System.out.println(entry.getKey() +" :: "+ entry.getValue());
