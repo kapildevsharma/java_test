@@ -17,21 +17,6 @@ public class CustomCache {
             }
     }
 
-/*
-    private static class Entity {
-        private final String value;
-        private final long expireAt;
-
-        Entity(String value, long ttlMillis) {
-            this.value = value;
-            this.expireAt = System.currentTimeMillis() + ttlMillis;;
-        }
-        boolean isExpired() {
-            return System.currentTimeMillis() > expireAt;
-        }
-    }
-*/
-
     // Thread-safe map
     private final ConcurrentHashMap<String, Entity> cacheMap = new ConcurrentHashMap<>();
 

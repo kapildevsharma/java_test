@@ -22,6 +22,7 @@ public class ThreadStopExample implements Runnable {
 		worker.interrupt();
 	}
 
+    @Override
 	public void run() {
 		running.set(true);
 		while (running.get()) {

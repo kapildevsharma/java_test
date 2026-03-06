@@ -2,8 +2,8 @@ package com.Test;
 
 public class TestThread {
 
-	 public static final Object Lock1 = new Object();
-   public static final Object Lock2 = new Object();
+    public static final Object Lock1 = new Object();
+    public static final Object Lock2 = new Object();
 
    public static void main(String args[]) {
       ThreadDemo1 T1 = new ThreadDemo1();

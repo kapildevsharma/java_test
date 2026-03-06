@@ -266,25 +266,50 @@ public class Java8 {
         System.out.println("count : "+ count); // number of subarrays
 
         // Find the first non-repeating character in a string.
-        String st = "swiss";
-        st.chars().mapToObj(ch -> (char) ch)
-                .collect(
-                Collectors.groupingBy(Function.identity(), LinkedHashMap::new, Collectors.counting()))
-                .entrySet().stream()
-                .filter(entry -> entry.getValue() ==1)
-                .findFirst().orElseThrow();
+        String st = "swisas";
+        String string = st.chars().mapToObj(ch -> (char) ch)
+                .collect(Collectors.groupingBy(
+                        Function.identity(),
+                        LinkedHashMap::new,
+                        Collectors.counting()))
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getValue() == 1)
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse('0').toString();
+        System.out.println("first non-repeating character : " + string);
 
         // Reverse each word in a sentence
         String sentence = "I love programming in Java";
-        Map<String, Long> wordCount = Arrays.stream(sentence.split(" "))
+        Map<String, Long> wordCount = Arrays.stream(sentence.toLowerCase().split("\\s+"))
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
         System.out.println("Word Count: " + wordCount);
-        String reversedWordSentence = Arrays.stream(sentence.split("//s+"))
+
+        String uniqueWord = wordCount.entrySet()
+                .stream()
+                .filter(entry -> entry.getValue() == 1)
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse("No unique word");
+        System.out.println("Without LinkedHashMap First unique word: " + uniqueWord);
+        uniqueWord = Arrays.stream(sentence.toLowerCase().split("\\s+"))
+                .collect(Collectors.groupingBy(Function.identity(), LinkedHashMap::new, Collectors.counting()))
+                .entrySet()
+                        .stream()
+                        .filter(entry -> entry.getValue() == 1)
+                        .map(Map.Entry::getKey)
+                        .findFirst()
+                        .orElse("No unique word");
+        System.out.println("First unique word: " + uniqueWord);
+
+
+        String reversedWordSentence = Arrays.stream(sentence.split("\\s+"))
                 .map(word -> new StringBuilder(word).reverse().toString())
                 .collect(Collectors.joining(" "));
 
         System.out.println("reversedWordInSentence: " + reversedWordSentence);
-        List<String> words = Arrays.asList(sentence.split(" "));
+        List<String> words = Arrays.asList(sentence.split("\\s+"));
 
         // Reverse the order of words in the sentence
         String reversedSentence = words.stream()
