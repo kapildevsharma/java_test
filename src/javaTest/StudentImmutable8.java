@@ -39,21 +39,10 @@ public final class StudentImmutable8 {
                         .stream()
                         .collect(Collectors.toMap(
                                 Map.Entry::getKey,
-                                e -> new Address(e.getValue().getCity()) // deep copy
+                                e -> new Address(e.getValue()) // deep copy
                         ))
         );
-
-        Map<String, Address> temp = new HashMap<>();
-
-        if (addresssData != null) {
-            for (Map.Entry<String, Address> entry : addresssData.entrySet()) {
-                temp.put(entry.getKey(), new Address(entry.getValue())); // deep copy
-            }
-        }
-
-      //  this.addresssData = Collections.unmodifiableMap(temp);
-
-        // Defensive copy + unmodifiable list
+        // Defensive copy for marks
         this.marks = marks == null ? Collections.emptyList() :
                 Collections.unmodifiableList(new ArrayList<>(marks));
 
@@ -61,7 +50,7 @@ public final class StudentImmutable8 {
         List<Address> tempList = new ArrayList<>();
         if (addresses != null) {
             for (Address address : addresses) {
-                tempList.add(new Address(address));
+                tempList.add(new Address(address)); // deep copy
             }
         }
         this.addresses = Collections.unmodifiableList(tempList);
@@ -79,33 +68,54 @@ public final class StudentImmutable8 {
         return metadata;
     }
 
+    // Defensive copy for MAP getter
+    public Map<String, Address> getAddresssData() {
+        Map<String, Address> copy = new HashMap<>();
+        for (Map.Entry<String, Address> entry : addresssData.entrySet()) {
+            copy.put(entry.getKey(), new Address(entry.getValue())); // deep copy
+        }
+        return Collections.unmodifiableMap(copy);
+    }
+
     public List<Integer> getMarks() {
         return marks;
     }
 
+    // Defensive copy for LIST getter
     public List<Address> getAddresses() {
-        return addresses;
+        List<Address> copy = new ArrayList<>();
+        for (Address addr : addresses) {
+            copy.add(new Address(addr)); // deep copy
+        }
+        return Collections.unmodifiableList(copy);
     }
 
-    // Defensive copy in getter (VERY IMPORTANT)
+    // Defensive copy for Date
     public Date getDob() {
         return dob == null ? null : new Date(dob.getTime());
     }
 }
 
-final class Address {
-    private final String city;
+/**
+ * Mutable class (intentionally mutable)
+ */
+class Address {
+    private String city;
 
     public Address(String city) {
         this.city = city;
     }
 
-    // copy constructor
+    // Copy constructor (important for deep copy)
     public Address(Address other) {
         this.city = other.city;
     }
 
     public String getCity() {
         return city;
+    }
+
+    public void setCity(String city) { // mutable setter
+        this.city = city;
     }
 }
