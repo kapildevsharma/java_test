@@ -16,6 +16,10 @@ public class FactorialNum {
                 + factorialUsingStreams(5));
 
     }
+  // max int  12! = 479001600
+  // max long 20! = 2432902008176640000
+    // BigInteger can handle arbitrarily large numbers,
+    // so we can compute factorials of much larger numbers without overflow issues.
 
     // Formulae for Factorial
     //n! = n * (n-1) * (n-2) * (n-3) * ........ * 1
@@ -55,12 +59,12 @@ public class FactorialNum {
             throw new IllegalArgumentException("n must be >= 0");
         }
 
-        return IntStream.rangeClosed(1, n)
+      /*  return IntStream.rangeClosed(1, n)
                 .mapToObj(BigInteger::valueOf)
                 .reduce(BigInteger.ONE, BigInteger::multiply);
-
-       /* return LongStream.rangeClosed(1, n)
-                .reduce(1, (long x, long y) -> x * y);*/
+*/
+        return BigInteger.valueOf(LongStream.rangeClosed(1, n)
+                .reduce(1, (long x, long y) -> x * y));
 
 
     }
