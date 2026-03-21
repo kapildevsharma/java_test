@@ -102,10 +102,6 @@ public final class StudentImmutable8 {
 class Address {
     private String city;
 
-    public Address(String city) {
-        this.city = city;
-    }
-
     // Copy constructor (important for deep copy)
     public Address(Address other) {
         this.city = other.city;
