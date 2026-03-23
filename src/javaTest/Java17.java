@@ -10,6 +10,18 @@ import java.util.stream.Stream;
 public class Java17 {
 	
 	public void duplciateElementInList() {
+
+        List<Integer> numList = Arrays.asList(10, 15, 8, 49, 25, 98, 49, 25, 32);
+        numList.stream().filter(e -> e%2==0).forEach(e -> System.out.println("Even number : " + e));
+        List<String> list1No = numList.stream().map(String::valueOf).filter( e -> e.startsWith("1")).toList();
+        list1No.forEach(e -> System.out.println("number start with 1 : " + e));
+
+        Set<Integer> unqueSet = new HashSet<Integer>();
+        numList.stream().filter(e -> !unqueSet.add(e)).collect(Collectors.toSet()).forEach(e -> System.out.println("Duplicate element : " + e));
+        int[] array = { 1, 2, 3, 4, 5 };
+        System.out.println(Arrays.stream(array).reduce(0, Integer::sum));
+        System.out.println(Arrays.stream(array).sum());
+
 		// Creating a list of Even Numbers
 		List<Integer> evenNumbers = Arrays.asList(2, 4, 6, 8, 4, 2);
 		// distinct (unique) example
