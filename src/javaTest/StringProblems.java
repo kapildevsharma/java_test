@@ -2,6 +2,7 @@ package javaTest;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 public class StringProblems {
 
@@ -20,8 +21,40 @@ public class StringProblems {
 		String str = "engineers rock";
         String pattern = "gsr";
         System.out.println("Check Word Pattern : "+checkWordPattern(str, pattern));
-        
-	}
+
+        str = "abcdABCDabcd";
+        Map<Character, Integer> charCountMap = new HashMap<>();
+        for (char c : str.toCharArray()) {
+            charCountMap.put(c, charCountMap.getOrDefault(c, 0) + 1);
+        }
+        System.out.println("Character counts: " + charCountMap);
+        for (char c : str.toCharArray()) {
+            if (charCountMap.containsKey(c)) {
+                charCountMap.put(c, charCountMap.get(c) + 1);
+            } else
+                charCountMap.put(c, 1);
+        }
+        System.out.println("Character counts: " + charCountMap);
+
+        String input = "Hello World";
+        boolean hasVowel = containsVowel(input);
+        System.out.println("hasVowel: " + hasVowel);
+    }
+
+    public static boolean containsVowel(String str) {
+        boolean flag;
+        str = str.toLowerCase();
+        flag = str.chars().anyMatch(ch -> "aeiou".indexOf(ch) != -1);
+        System.out.println("stream way : flag: " + flag);
+        for (char ch : str.toCharArray()) {
+            if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u') {
+                flag = true;
+                break;
+            }
+        }
+        System.out.println("Normal way : flag: " + flag);
+        return flag;
+    }
 
 	// function to check two strings anagram
 	public static boolean checkAnagram(String s, String t, boolean isUsedSortingAPI) {

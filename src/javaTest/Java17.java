@@ -22,6 +22,18 @@ public class Java17 {
         System.out.println(Arrays.stream(array).reduce(0, Integer::sum));
         System.out.println(Arrays.stream(array).sum());
 
+        List<String> list1 = new ArrayList<>();
+        list1.add("1");
+        List<String> list2 = new ArrayList<>();
+        list2.add("2");
+        List<String> list3 = new ArrayList<>();
+        list3.add("3");
+
+        List<String> mergedList = new ArrayList<>(list1);
+        mergedList.addAll(list2);
+        mergedList.addAll(list3);
+        System.out.println("Merge multiple lists : "+mergedList); // [1, 2]
+
 		// Creating a list of Even Numbers
 		List<Integer> evenNumbers = Arrays.asList(2, 4, 6, 8, 4, 2);
 		// distinct (unique) example
