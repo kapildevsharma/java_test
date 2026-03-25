@@ -60,16 +60,13 @@ public class JavaForkJoingetActivethreadcountExample1 {
 	public static void main(final String[] arguments) throws InterruptedException {
 		// get no. of available core available
 		int proc = Runtime.getRuntime().availableProcessors();
-
 		System.out.println("Number of available core in the processor is: " + proc);
 
 		// get no. of threads active
 		ForkJoinPool pool = ForkJoinPool.commonPool();
-
 		System.out.println("Number of active thread before invoking: " + pool.getActiveThreadCount());
 
 		pool.invoke( new NewTask(400));
-
 		System.out.println("Number of active thread after invoking: " + pool.getActiveThreadCount());
 		System.out.println("Common Pool Size is: " + pool.getPoolSize());
 

@@ -9,15 +9,13 @@ import java.util.stream.Stream;
 
 public class Java17 {
 	
-	public void duplciateElementInList() {
+	public void streamOperationsDemo() {
 
-        List<Integer> numList = Arrays.asList(10, 15, 8, 49, 25, 98, 49, 25, 32);
+        List<Integer> numList = List.of(10, 15, 8, 49, 25, 98, 49, 25, 32);
         numList.stream().filter(e -> e%2==0).forEach(e -> System.out.println("Even number : " + e));
         List<String> list1No = numList.stream().map(String::valueOf).filter( e -> e.startsWith("1")).toList();
         list1No.forEach(e -> System.out.println("number start with 1 : " + e));
 
-        Set<Integer> unqueSet = new HashSet<Integer>();
-        numList.stream().filter(e -> !unqueSet.add(e)).collect(Collectors.toSet()).forEach(e -> System.out.println("Duplicate element : " + e));
         int[] array = { 1, 2, 3, 4, 5 };
         System.out.println(Arrays.stream(array).reduce(0, Integer::sum));
         System.out.println(Arrays.stream(array).sum());
@@ -35,7 +33,7 @@ public class Java17 {
         System.out.println("Merge multiple lists : "+mergedList); // [1, 2]
 
 		// Creating a list of Even Numbers
-		List<Integer> evenNumbers = Arrays.asList(2, 4, 6, 8, 4, 2);
+		List<Integer> evenNumbers = List.of(2, 4, 6, 8, 4, 2);
 		// distinct (unique) example
 		List<Integer> uniqueList = evenNumbers.stream().distinct().toList();
         uniqueList.forEach(i -> System.out.println("unique element: "+ i));
@@ -70,14 +68,19 @@ public class Java17 {
             .collect(Collectors.toSet())
             .forEach(duplicate -> System.out.println("Duplicate element: " + duplicate));
 
-	}
+        Set<Integer> unqueSet = new HashSet<Integer>();
+        numList.stream().filter(e -> !unqueSet.add(e))
+            .collect(Collectors.toSet())
+            .forEach(e -> System.out.println("Duplicate element : " + e));
+
+    }
 
 	public void flatMapMethod() {
 		
 		Map<String, List<String>> people = new HashMap<>();
-		people.put("John", Arrays.asList("555-1123", "555-3389"));
-		people.put("Mary", Arrays.asList("555-2243", "555-5264"));
-		people.put("Steve", Arrays.asList("555-6654", "555-3242"));
+		people.put("John", List.of("555-1123", "555-3389"));
+		people.put("Mary", List.of("555-2243", "555-5264"));
+		people.put("Steve", List.of("555-6654", "555-3242"));
 
 		List<String> flatMapPhones = people.values().stream()
 		  .flatMap(Collection::stream).toList();
@@ -87,40 +90,40 @@ public class Java17 {
 		}
 		
 		// Creating a list of Prime Numbers
-		List<Integer> primeNumbers = Arrays.asList(5, 7, 11, 13);
+		List<Integer> primeNumbers = List.of(5, 7, 11, 13);
 		// Creating a list of Odd Numbers
-		List<Integer> oddNumbers = Arrays.asList(1, 3, 5);
+		List<Integer> oddNumbers = List.of(1, 3, 5);
 		// Creating a list of Even Numbers
-		List<Integer> evenNumbers = Arrays.asList(2, 4, 6, 8, 4, 2);
+		List<Integer> evenNumbers = List.of(2, 4, 6, 8, 4, 2);
 		evenNumbers = evenNumbers.stream()
 				.peek(s -> System.out.println("list value : "+ s)).distinct()
 				.peek(s -> System.out.println("unique list value : "+ s))
-				.collect(Collectors.toList());
-		List<List<Integer>> listOfListofInts = Arrays.asList(primeNumbers, oddNumbers, evenNumbers);
+				.toList();
+		List<List<Integer>> listOfListofInts = List.of(primeNumbers, oddNumbers, evenNumbers);
 		System.out.println("The Structure before flattening is : " + listOfListofInts);
 
 		// Using flatMap for transferFormating and flattening.  
-		List<Integer> listofInts = listOfListofInts.stream().flatMap(Collection::stream)
+		List<Integer> integerList = listOfListofInts.stream().flatMap(Collection::stream)
 				.peek(data -> System.out.println("peek "+data))
 				.toList();
-		System.out.println("The Structure after flattening is : " + listofInts);
+		System.out.println("The Structure after flattening is : " + integerList);
 
 		List<String> citylist = extractedMapUpperCase();
 		System.out.println("Flat Map");
-		citylist.stream().flatMap(num -> Stream.of(num)).forEach(System.out::println);
+		citylist.forEach(System.out::println);
 
 		System.out.println();
-		List<List<String>> subList = Arrays.asList(List.of("a"), List.of("b"));
+		List<List<String>> subList = List.of(List.of("a"), List.of("b"));
 		System.out.println("subList : "+ subList);
 		System.out.println(subList.stream().flatMap(Collection::stream).collect(Collectors.toList()));
 
-		List<String> list1 = Arrays.asList("5.6", "7.4", "4", "1", "2.3");
+		List<String> list1 = List.of("5.6", "7.4", "4", "1", "2.3");
 		// Using Stream flatMap(Function mapper)
 		list1.forEach(System.out::println);
 
 		List<String> country = Stream
-				.of(Arrays.asList("Colombia", "Finland", "Greece", "Iceland", "Liberia", "Mali", "Mauritius"),
-						Arrays.asList("Peru", "Serbia", "Singapore", "Turkey", "Uzbekistan", "Yemen", "Zimbabwe",
+				.of(List.of("Colombia", "Finland", "Greece", "Iceland", "Liberia", "Mali", "Mauritius"),
+                        List.of("Peru", "Serbia", "Singapore", "Turkey", "Uzbekistan", "Yemen", "Zimbabwe",
 								"Greece", "Iceland"))
 				.flatMap(List::stream).toList();
 
@@ -138,25 +141,25 @@ public class Java17 {
 	public void displayAvgIntArr() {
 		int[] arr = new int[] {1,2,3,4,5,6,7,8,9,10};
 		System.out.println("Before time :" +LocalDateTime.now());
-        Optional<Double> doubleOptional = Optional.of(Arrays.stream(arr).map(i -> (i % 2 != 0) ? i++ : i).average().orElse(0.0));
-		double avg = doubleOptional.orElse(0.0);
+        OptionalDouble doubleOptional = OptionalDouble.of(Arrays.stream(arr).map(i -> (i % 2 != 0) ? i+1 : i).average().orElse(0.0));
+
+        double avg = doubleOptional.orElse(0.0);
 		System.out.println("Avg :" +avg);
 		System.out.println("After time :" +LocalDateTime.now());
 		System.out.println("Before time :" +LocalDateTime.now());
 		Arrays.stream(arr).boxed().toList().forEach(e -> System.out.print("listOfNumbers : " + e + " "));
 
-		List<Integer> list = new ArrayList<Integer>(Arrays.asList(1,2,3,4,5,6,7,8,9)) ;
+		List<Integer> list = new ArrayList<Integer>(List.of(1,2,3,4,5,6,7,8,9)) ;
 
-        OptionalDouble doubleOpt = OptionalDouble.of(list.parallelStream().map(i ->(i%2!=0)? i++:i).mapToInt(Integer::intValue).average().getAsDouble());
+        OptionalDouble doubleOpt = OptionalDouble.of(list.parallelStream().map(i ->(i%2!=0)? i+1:i).mapToInt(Integer::intValue).average().getAsDouble());
         double avgD = doubleOpt.getAsDouble();
         System.out.println("Avg :" +avgD);
 		System.out.println("After time :" +LocalDateTime.now());
-		
 	}
 
 	public static void main(String[] args) {
 		Java17 obj = new Java17();
-		obj.duplciateElementInList();
+		obj.streamOperationsDemo();
 		obj.flatMapMethod();
 		obj.displayAvgIntArr();
 	
@@ -165,12 +168,12 @@ public class Java17 {
 		List<String> collect = Stream.of(array)     // Stream<String[]>
 				.flatMap(Stream::of)                // Stream<String>
 		        .filter(x -> !"a".equals(x))        // filter out the a
-		        .toList();
+		        .toList(); // Collect the result into a List
 		System.out.println("collect to list : " + collect);
 		String[] result  = Stream.of(array)     // Stream<String[]>
 		        .flatMap(Stream::of)                // Stream<String>
 		          .filter(x -> !"a".equals(x))        // filter out the a
-		          .toArray(String[]::new);  
+		          .toArray(String[]::new); // Collect the result into an Array
 		System.out.println("result in array : " + Arrays.toString(result));
 		  
 		List<String> citylist = Stream.of("delhi", "mumbai", "hyderabad", "ahmedabad", "indore", "patna")
@@ -185,12 +188,10 @@ public class Java17 {
 		
 		System.out.println("use map");
 		citylist.stream()
-		.peek(data -> System.out.println("log in stream by peek() method " + data))
-		.map(s -> {
-			return s.substring(2);
-		}).toList().forEach(e -> System.out.print("substring after 2nd index, name : " + e));
-		System.out.println();
-		
+		    .peek(data -> System.out.println("log in stream by peek() method " + data))
+            .map(s -> s.substring(2))
+            .toList().forEach(e -> System.out.print("Substring after 2nd index, name : " + e+" "));
+
 		System.out.println("\nSorted method");
 		citylist.stream().filter(s -> s.length() > 5).sorted().forEach(name -> System.out.print(name + " "));;
 		
@@ -203,7 +204,7 @@ public class Java17 {
 		boolean flag = citylist.stream().peek(data -> System.out.println("check peek "+data)).anyMatch(s -> s.contains("P"));
 		System.out.println("match value in list: " + flag);
 
-		List<Integer> intStream = Arrays.asList(12, 45, 67, 19, 87, 2, 9);
+		List<Integer> intStream = List.of(12, 45, 67, 19, 87, 2, 9);
 		System.out.println("Number of elements in stream=" + intStream.size());
 		System.out.println("Stream contains all elements less than 50 :  "+ intStream.stream().allMatch(i -> i<50)
 				+ " :: Stream contains any elements great than 50 : " + intStream.stream().anyMatch(i -> i>50) );
@@ -275,13 +276,14 @@ public class Java17 {
                     error.printStackTrace();
                 }
             });
+
+        executor.shutdown();
     }
 	
 	
 	private static void optionalValue(List<String> citylist) {
 		Optional<String> firstNameWithD = citylist.stream().filter(i -> i.contains("D")).findFirst();
         firstNameWithD.ifPresent(s -> System.out.println("find first Name contains with D =" + s));
-
         Optional<String> firstNameWith = citylist.stream().filter(i -> i.contains("D")).findAny();
         firstNameWith.ifPresent(s -> System.out.println("find any Name contains with D = " + s));
 	}

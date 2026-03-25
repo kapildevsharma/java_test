@@ -11,13 +11,14 @@ import java.util.stream.Stream;
 
 public class Java8 {
 	
-	public void duplciateElementInList() {
+	public void duplicateElementInList() {
 		// Creating a list of Even Numbers
 		List<Integer> EvenNumbers = Arrays.asList(2, 4, 6, 8, 4, 2);
 		// distinct (unique) example
+        // Using Stream distinct() method to get unique elements from list
 		List<Integer> deduped = EvenNumbers.stream().distinct().collect(Collectors.toList());
 		deduped.stream().forEach(i -> System.out.println("unique element: "+ i));
-		
+		// normal way to find unique element in list by using set
 		LinkedHashSet<Integer> linkedHashset = new LinkedHashSet<Integer>(EvenNumbers);
 		List<Integer> myArrayList = new ArrayList<Integer>(linkedHashset);
 		myArrayList.stream().forEach(e -> System.out.println("In linkedHashset, arralylist unique element: " + e));
@@ -36,7 +37,7 @@ public class Java8 {
 			}
 		}
 		// End Example of CopyOnWriteArrayList  
-		
+
 		// find duplicate value in list
 		Set<Integer> set = new HashSet<Integer>();
 		EvenNumbers.stream().filter(e -> !set.add(e)).collect(Collectors.toSet()).
@@ -55,7 +56,7 @@ public class Java8 {
 
 		// get unique value from list 
 		Set<Integer> uniqueGas = new HashSet<Integer>(EvenNumbers);
-	//	uniqueGas.stream().forEach(System.out::println);
+	//	uniqueGas.forEach(System.out::println);
 		System.out.println("By Using set, unique element count: " + uniqueGas.size());
 	}
 
@@ -94,21 +95,9 @@ public class Java8 {
 
 		System.out.println("The Structure after flattening is : " + listofInts);
 
-		List<String> citylist = extractedMapUpperCase();
-
-		System.out.println("Flat Map");
-		citylist.stream().flatMap(num -> Stream.of(num)).forEach(System.out::println);
-
-		System.out.println();
-		
 		List<List<String>> subList = Arrays.asList(Arrays.asList("a"), Arrays.asList("b"));
 		System.out.println("subList : "+ subList);
-
 		System.out.println(subList.stream().flatMap(Collection::stream).collect(Collectors.toList()));
-
-		List<String> list1 = Arrays.asList("5.6", "7.4", "4", "1", "2.3");
-		// Using Stream flatMap(Function mapper)
-		list1.stream().flatMap(num -> Stream.of(num)).forEach(System.out::println);
 
 		List<String> country = Stream
 				.of(Arrays.asList("Colombia", "Finland", "Greece", "Iceland", "Liberia", "Mali", "Mauritius"),
@@ -118,75 +107,102 @@ public class Java8 {
 
 		System.out.println("country " + country);
 
+        String[][] array = new String[][]{{"a", "b"}, {"c", "d"}, {"e", "f"}};
+        List<String> collect = Stream.of(array)     // Stream<String[]>
+                .flatMap(Stream::of)                // Stream<String>
+                .filter(x -> !"a".equals(x))        // remove "a"
+                .collect(Collectors.toList());
+        System.out.println("collect to list : " + collect);
+        String[] result  = Stream.of(array)     // Stream<String[]>
+                .flatMap(Stream::of)                // Stream<String>
+                .filter(x -> !"a".equals(x))        // remove "a"
+                .toArray(String[]::new);
+        System.out.println("result in array[] object : " + Arrays.toString(result));
+
 	}
 
-	private List<String> extractedMapUpperCase() {
-		List<String> citylist = Arrays.asList("delhi", "mumbai", "hyderabad", "ahmedabad", "indore", "patna").stream()
+	private List<String> extractedMapUpperCase(List<String> cityList) {
+		cityList = cityList.stream()
 				.map(String::toUpperCase).collect(Collectors.toList());
-		System.out.println("upperCase list : " + citylist);
-		return citylist;
+		System.out.println("upperCase list : " + cityList);
+        return cityList;
+
 	}
 	
 	public void displayAvgIntArr() {
 		int[] arr = new int[] {1,2,3,4,5,6,7,8,9,10};
+        int sum = Arrays.stream(arr).sum();
+        System.out.println("sum of arr:" + sum);
 		System.out.println("Before time :" +LocalDateTime.now());
-		double avg = Arrays.stream(arr).map(i -> (i%2!=0)? i++:i).average().getAsDouble();
-		System.out.println("Avg :" +avg);
+		double avg = Arrays.stream(arr).map(i -> (i%2!=0) ? i+1 : i)
+                .average().orElse(0.0);
+		System.out.println("Avg of arr after convert odd to even :" +avg);
 		System.out.println("After time :" +LocalDateTime.now());
-		System.out.println("Before time :" +LocalDateTime.now());
-		List<Integer> listOfNumbers = Arrays.stream(arr).boxed().collect(Collectors.toList());
 
+        System.out.println("Before time :" +LocalDateTime.now());
+		List<Integer> listOfNumbers = Arrays.stream(arr).boxed().collect(Collectors.toList());
 		List<Integer> list = new ArrayList<Integer>(Arrays.asList(1,2,3,4,5,6,7,8,9)) ;
 
-		double avgD = list.parallelStream().map(i ->(i%2!=0)? i++:i).mapToInt(Integer::intValue).average().getAsDouble();
+		double avgD = list.stream().mapToInt(i ->(i%2!=0)? i+1:i).average().getAsDouble();
 		System.out.println("Avg :" +avgD);
 
-		System.out.println("After fore time :" +LocalDateTime.now());
+		System.out.println("After avg time :" +LocalDateTime.now());
 
+
+
+    }
+    public void topKFrequent() {
         // Find Top K Frequent Words  Input: ["java","python","java","go","java","go"], K=2 → ["java
         //","go"]
+        int k=2;
         List<String> words = List.of("java","python","java","go","java","go");
         Map<String, Long> freqMap = words.stream()
                 .collect(Collectors.groupingBy(w -> w, Collectors.counting()));
         // print the frequency map
         freqMap.forEach((w, count) -> System.out.println("Word: " + w + ", Count: " + count));
 
+        freqMap = new HashMap<>();
+        for (String word : words) {
+            freqMap.put(word, freqMap.getOrDefault(word, 0L) + 1);
+        }
+    // directly filter the frequency map to get top K frequent words
+        freqMap.entrySet().stream()
+                .filter(entity -> entity.getValue()==k)
+                .map(Map.Entry::getKey)
+                .forEach(w -> System.out.println("Top " + k + " frequent word: " + w));
+
+        // sort the frequency map by value and get top K frequent words
+        freqMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .limit(k)
+                .map(Map.Entry::getKey)
+                .forEach(w -> System.out.println("Top " + k + " frequent word: " + w));
+
     }
 
 	public static void main(String[] args) {
 		Java8  obj = new Java8();
-		obj.duplciateElementInList();
+		obj.duplicateElementInList();
 		obj.flatMapMethod();
 		obj.displayAvgIntArr();
-	
-		String[][] array = new String[][]{{"a", "b"}, {"c", "d"}, {"e", "f"}};
+        obj.topKFrequent();
 
-		List<String> collect = Stream.of(array)     // Stream<String[]>
-				.flatMap(Stream::of)                // Stream<String>
-		        .filter(x -> !"a".equals(x))        // filter out the a
-		        .collect(Collectors.toList());
-		System.out.println("collect to list : " + collect);
-		String[] result  = Stream.of(array)     // Stream<String[]>
-		        .flatMap(Stream::of)                // Stream<String>
-		          .filter(x -> !"a".equals(x))        // filter out the a
-		          .toArray(String[]::new);  
-		System.out.println("result in array : " + result);
-		  
-		List<String> citylist = Arrays.asList("delhi", "mumbai", "hyderabad", "ahmedabad", "indore", "patna").stream()
-				.map(String::toUpperCase).collect(Collectors.toList());
+        // covert string value of list to upper case
+       	List<String> citylist = obj.extractedMapUpperCase(Arrays.asList("delhi", "mumbai", "hyderabad", "ahmedabad", "indore", "patna"));
 		System.out.println("upperCase MAP list : " + citylist);
+        // filter list by length and print
 		citylist.stream().filter(s -> s.length() > 5).forEach(name -> System.out.print(name + " "));
-
 		System.out.println();
-		
+        // find first and any value in list by using optional
 		optionalValue(citylist);
 		
 		System.out.println("use map");
+        // use map to get substring after 2nd index and print
 		citylist.stream()
-		.peek(data -> System.out.println("log in stream by peek() method "+data))
-		.map(s -> {
-			return s.substring(2);
-		}).collect(Collectors.toList()).forEach(e -> System.out.print("substring after 2nd index, name : " + e));
+            .peek(data -> System.out.println("log in stream by peek() method "+data))
+            .map(s -> {
+                return s.substring(2);
+            }).collect(Collectors.toList()).forEach(e -> System.out.println("substring after 2nd index, name : " + e));
 		System.out.println();
 		
 		System.out.println("\nSorted method");
@@ -202,12 +218,13 @@ public class Java8 {
 		System.out.println("match value in list: " + flag);
 
 		List<Integer> intStream = Arrays.asList(12, 45, 67, 19, 87, 2, 9);
-
 		System.out.println("Number of elements in stream=" + intStream.stream().count());
-		System.out.println("Stream contains all elements less than 50 :  "+intStream.stream().allMatch(i -> i<50)
-				+ " :: Stream contains any elements great than 50 : " +intStream.stream().anyMatch(i -> i>50) + " :: ");
+		System.out.println("Stream contains all elements less than 50 :  "+
+                intStream.stream().allMatch(i -> i<50));
+        System.out.println(" :: Stream contains any elements great than 50 : " +
+                intStream.stream().anyMatch(i -> i>50) + " :: ");
 		
-		Integer[] intArray = intStream.stream().toArray(Integer[]::new);
+		Integer[] intArray = intStream.toArray(Integer[]::new);
 		System.out.println("list to Array object : " + Arrays.toString(intArray));
 		Stream.of(intArray).forEach(a -> System.out.print("intValue : " + a));
 		System.out.println();
@@ -375,7 +392,9 @@ public class Java8 {
         CompletableFuture.runAsync(Java8::consumeMain, customPool);
 
       // 0 - returned by exceptionally block 
-		System.out.println(resultFuture.get()); 
+		System.out.println(resultFuture.get());
+
+        customPool.shutdown();
 		
 	}
 	
@@ -385,10 +404,9 @@ public class Java8 {
 		if(firstNameWithD.isPresent()){
 			System.out.println("find first Name contains with D ="+firstNameWithD.get());
 		}
-		Optional<String> firstNameWith = citylist.stream().filter(i -> i.contains("D")).findAny();
-		if(firstNameWith.isPresent()){
-			System.out.println("find any Name contains with D = "+firstNameWith.get());
-		}
+		Optional<String> firstAnyNameWith = citylist.stream().filter(i -> i.contains("D")).findAny();
+        firstAnyNameWith.ifPresent(s -> System.out.println("find any Name contains with D = " + s));
+
 	}
 
 	public static void consumeMain() {
