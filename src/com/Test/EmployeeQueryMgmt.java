@@ -105,8 +105,19 @@ public class EmployeeQueryMgmt {
 						Collectors.collectingAndThen(
                             Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary)),
                             Optional::get)));
-        maxSalaryEmpInEachdept1 =
-                employeeList.stream()
+        // Highest salary per department
+        Map<String, Employee> map = new HashMap<>();
+
+        for (Employee e : employeeList) {
+            map.merge( e.getDepartment(), e,
+                (existing, newEmp) ->
+                        existing.getSalary() > newEmp.getSalary() ? existing : newEmp
+            );
+        }
+        map.forEach((dept, emp) -> System.out.println("Department: " + dept + ", Employee: " + emp.getName() + ", Salary: " + emp.getSalary()));
+
+        // for java 8
+        maxSalaryEmpInEachdept1 = employeeList.stream()
                         .collect(Collectors.toMap(
                                 Employee::getDepartment,
                                 e -> e,

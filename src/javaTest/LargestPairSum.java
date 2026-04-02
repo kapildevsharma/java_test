@@ -40,7 +40,7 @@ public class LargestPairSum {
     }
 
     // Time Complexity: O(n)
-    //Space Complexity: O(1)
+    // Space Complexity: O(1)
     // Find the maximum sum of a contiguous subarray. Kadane’s Algorithm
     public static void findMaxSumWithStartEndIndex (int[] arr) {
         System.out.println("Finding max sum with start and end index in arr[] "+ Arrays.toString(arr));
