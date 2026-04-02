@@ -23,11 +23,12 @@ public class ProducerConsumerSolution {
         executor.submit(new Consumer(executorQueue));
 
         executor.shutdown();
-        executor.awaitTermination(10, TimeUnit.SECONDS);
+        boolean result  = executor.awaitTermination(10, TimeUnit.SECONDS);
 
         // CompletableFuture async logic for producer & consumer
         BlockingQueue<Integer> cfQueue = new ArrayBlockingQueue<>(1);
-        CompletableFuture<Void> producerFuture = CompletableFuture.runAsync(new Producer(cfQueue));
+        CompletableFuture<Void> producerFuture =
+                CompletableFuture.runAsync(new Producer(cfQueue));
         CompletableFuture<Void> consumerFuture = CompletableFuture.runAsync(new Consumer(cfQueue));
         CompletableFuture.allOf(producerFuture, consumerFuture).join();
 

@@ -22,9 +22,8 @@ public class Person implements Cloneable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Person)) return false;
+        if (!(o instanceof Person person)) return false;
 
-        Person person = (Person) o;
         // Handles nulls automatically:  Objects.equals(null, null) → true
         return Objects.equals(firstName, person.firstName) &&
                 Objects.equals(lastName, person.lastName);

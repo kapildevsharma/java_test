@@ -5,6 +5,8 @@ import com.Test.EmployeeSal;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -37,6 +39,8 @@ public class Java17QuesAns {
         numbers.stream().filter(n -> n%2 ==0).forEach(System.out::println);
         Map <Boolean, List <Integer>> map = numbers.stream().collect(Collectors.partitioningBy( n-> n%2==0));
         System.out.println("print even numbers by partitioningBy: "+ map.get(true));
+        System.out.println("print old numbers by partitioningBy: "+ map.get(false));
+
         // Write a program to map integers to their squares and print results.
         System.out.println("program to map integers to their squares and print results");
         numbers.stream().map( n -> n*n).forEach(System.out::println);
@@ -45,7 +49,7 @@ public class Java17QuesAns {
         System.out.println("program to convert old to even integers then find average and print results");
         AtomicReference<Double> avgVal = new AtomicReference<>(0.0);
 
-        numbers.stream().map( n -> n%2!=0 ? n++ : n).mapToInt(Integer::intValue).average().ifPresent(avgVal::set);
+        numbers.stream().map( n -> n%2!=0 ? n+1 : n).mapToInt(Integer::intValue).average().ifPresent(avgVal::set);
         System.out.println("average of even list : "+avgVal);
 
         OptionalDouble t = numbers.stream().filter(n -> n % 2 == 0).mapToInt(n -> n).average();
@@ -57,8 +61,10 @@ public class Java17QuesAns {
         System.out.println("program to count and print the number of elements in a list");
         List<String> words = Arrays.asList("apple", "banana", "pear");
         long count = Stream.of("apple", "banana", "pear",1,true).count();
-
         System.out.println("Count of list element : "+count);
+
+        words.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .forEach((k,v) -> System.out.println("Element: "+k + ", count: "+v));
 
         // Write a program to reduce a list of integers to their sum.
         System.out.println("program to reduce a list of integers to their sum");
@@ -82,7 +88,18 @@ public class Java17QuesAns {
         System.out.println("program to reduce a list of integers to their sum");
         words = Arrays.asList("Java", "Python", "JavaScript");
         words.forEach(word -> System.out.println(word+ " length : "+word.length()));
-        
+
+        // CompletableFuture async pipeline
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        List<CompletableFuture<Void>> futures = words.stream()
+                .map(word -> CompletableFuture.supplyAsync(() -> {
+                    System.out.println("Calculating length for: " + word);
+                    return "Processed: " + word;
+                }, executor).thenAccept(System.out::println))
+                .toList();
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+        executor.shutdown();
+
         //Write a program to print distinct elements from a list of integers.
         System.out.println("program to print distinct elements from a list of integers");
         numbers = Arrays.asList(1, 2, 2, 3, 4, 4);
@@ -103,13 +120,15 @@ public class Java17QuesAns {
         
         //Write a program to group strings by their lengths and print the groups.
         System.out.println("program to group strings by their lengths and print the groups");
-        words = Arrays.asList("a", "bb", "ccc", "dd");
+        words = Arrays.asList("a", "bb", "ccc", "dd","fff");
         Map<Integer, List<String>> groupByLenghtMap= words.stream().collect(Collectors.groupingBy(String::length));
         System.out.println("groupByLenghtMap : "+ groupByLenghtMap);
-        /* while(iter.hasNext()) {
+        Iterator<Entry<Integer, List<String>>> iter = groupByLenghtMap.entrySet().iterator();
+        while(iter.hasNext()) {
         	Entry<Integer, List<String>> entry = iter.next();
         	System.out.print("Group Count :"+entry.getKey() + ", List of String: " + entry.getValue()+ " ");
-        }*/
+        }
+
         for (Entry<Integer, List<String>> entry : groupByLenghtMap.entrySet()) {
             System.out.print("Group Count :" + entry.getKey() + ", List of String: " + entry.getValue() + " ");
         }
@@ -134,7 +153,10 @@ public class Java17QuesAns {
         // Write a program to find min and max value in list.
         System.out.println("program to max and min elements in a list, then print");
         max = numbers.stream().max(Comparator.naturalOrder()).get();
-        int min = numbers.stream().min(Comparator.reverseOrder()).get();
+        int min = numbers.stream().min(Comparator.naturalOrder()).get();
+        System.out.println("Min: "+min + ", Max: "+max);
+        max = numbers.stream().min(Comparator.reverseOrder()).get();
+        min = numbers.stream().min(Integer::compare).get();
         System.out.println("Min: "+min + ", Max: "+max);
         		
         // Write a program to create a custom functional interface for addition.
@@ -144,8 +166,8 @@ public class Java17QuesAns {
         
         //Write a program using flatMap to print characters from lists of strings.
         System.out.println("program using flatMap to print characters from lists of strings");
-        List<List<String>> list = Arrays.asList(
-                Arrays.asList("A", "B"),
+        List<List<String>> list = List.of(
+                List.of("A", "B"),
                 Arrays.asList("C", "D"));
         list.stream().flatMap(List::stream).forEach(System.out::println);
         
@@ -158,7 +180,8 @@ public class Java17QuesAns {
         System.out.println("program to find duplicate element in list.");
         Map<Integer, Long> duplicateMap = IntStream.of( 1, 2, 3, 2, 1, 2, 3, 4, 2, 5, 2 ).boxed().
         		collect(Collectors.groupingBy(Function.identity(),Collectors.counting()));
-         List<Integer> duplicateList= duplicateMap.entrySet().stream().filter(p -> p.getValue()>1).map(Entry::getKey).toList();
+         List<Integer> duplicateList= duplicateMap.entrySet().stream()
+                 .filter(entry -> entry.getValue()>1).map(Entry::getKey).toList();
          duplicateList.forEach(System.out::println);
          
          // How to filter an array of strings by a given prefix using Stream
@@ -170,18 +193,24 @@ public class Java17QuesAns {
 
          // reverse string words
          System.out.println("program to find reverse string in list.");
-         String str = " avaj si a java ele sts";
-         str = Arrays.stream(str.split(" ")).map(word -> new StringBuffer(word).reverse()).collect(Collectors.joining(" "));
+         String str = " avaj si a gnal os";
+         str = Arrays.stream(str.split(" "))
+                 .map(word -> new StringBuffer(word).reverse().toString())
+                 .collect(Collectors.joining(" "));
+
          System.out.println("Reverse str "+ str);
  
          //program to check if two strings are anagrams or not
          System.out.println("program to check if two strings are anagrams or not");
          String s1 = "RaceCar";
          String s2 = "CarRace";
-         s1 = Stream.of(s1.split("")).map(String::toUpperCase).sorted().collect(Collectors.joining(""));
-         s2 = Stream.of(s2.split("")).map(String::toUpperCase).sorted().collect(Collectors.joining(""));
+         s1 = Stream.of(s1.split("")).map(String::toUpperCase).sorted().collect(Collectors.joining());
+         s2 = Stream.of(s2.split("")).map(String::toUpperCase).sorted().collect(Collectors.joining());
          System.out.println(s1.equals(s2)? "Two String are anagrams":"Two String are not anagrams");
-         s1= Arrays.stream("RaceCar".split("")).map(String::toLowerCase).sorted().reduce("", (s,c)->s+c,(acc, ch) -> ch + acc);  
+         s1= Arrays.stream("RaceCar".split("")).map(String::toLowerCase).sorted()
+                 .reduce("", (s,c)->s+c,(
+                         acc, ch) -> ch + acc // use in parallel stream to reverse the string while reducing
+                 );
          System.out.println(s1);
         
          //Palindrome program using reams
@@ -194,9 +223,18 @@ public class Java17QuesAns {
 
          List<Integer> listOfIntegers = Arrays.asList(111, 222, 333, 111, 555, 333, 777, 222);
          Set<Integer> uniqueElements = new HashSet<Integer>();
-         Set<Integer> duplicateElements = listOfIntegers.stream().filter(i -> ! uniqueElements.add(i)).collect(Collectors.toSet());
+         Set<Integer> duplicateElements = listOfIntegers.stream()
+                 .filter(i -> ! uniqueElements.add(i)).collect(Collectors.toSet());
          System.out.println("duplicateElements: "+duplicateElements);
-         
+
+        duplicateElements = listOfIntegers.stream()
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()
+                )).entrySet().stream().filter(entry -> entry.getValue()>1)
+                .map(Entry::getKey).collect(Collectors.toSet());
+        System.out.println("duplicateElements: "+duplicateElements);
+
+         Optional.ofNullable(listOfIntegers).orElse(Collections.emptyList()).stream().toArray();
+
          //program to find the factorial of a given number 
          System.out.println("program to factorial of given number");
          int number = 5;
@@ -233,7 +271,7 @@ public class Java17QuesAns {
                 ));
 
         result.forEach(
-                (dept, employeeSalList) ->
+            (dept, employeeSalList) ->
                 {
                     System.out.println("dept: "+ dept);
                     employeeSalList.forEach(e -> System.out.println(e.getName()+" "+ e.getSalary()));

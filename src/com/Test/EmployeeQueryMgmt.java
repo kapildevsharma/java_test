@@ -1,13 +1,7 @@
 package com.Test;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.DoubleSummaryStatistics;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -39,18 +33,15 @@ public class EmployeeQueryMgmt {
         // Count Male and Female Employees
 		Map<String, Long> noOfMaleAndFemaleEmployees = employeeList.stream()
 				.collect(Collectors.groupingBy(Employee::getGender, Collectors.counting()));
-
 		System.out.println(noOfMaleAndFemaleEmployees);
 
         // List all Unique departments in organization
 		Stream<String> uniqueDeprtMap = employeeList.stream().map(Employee::getDepartment).distinct();
-
 		uniqueDeprtMap.forEach(System.out::println);
 
         // Average age of male and female employees
 		Map<String, Double> avgAgeOfMaleAndFemaleEmployees = employeeList.stream()
 				.collect(Collectors.groupingBy(Employee::getGender, Collectors.averagingInt(Employee::getAge)));
-
 		System.out.println(avgAgeOfMaleAndFemaleEmployees);
 
         // Get the details of highest paid employee in the organization
@@ -76,7 +67,7 @@ public class EmployeeQueryMgmt {
 		System.out.println("Each Remaining loop: ");
 		noOfDeprtEmployees.keySet().iterator().forEachRemaining(System.out::println);
 		System.out.println("Each loop : ");
-		noOfDeprtEmployees.keySet().stream().forEach(System.out::println);
+		noOfDeprtEmployees.keySet().forEach(System.out::println);
 		System.out.println("keyset array: ");
 		Stream.of(noOfDeprtEmployees.keySet().toArray()).forEach(System.out::println);
 		System.out.println(noOfDeprtEmployees);
@@ -84,7 +75,6 @@ public class EmployeeQueryMgmt {
 		// get name and salary in map
 		Map<String, Double> nameSalaryMap = employeeList.stream()
 				.collect(Collectors.toMap(Employee::getName, Employee::getSalary));
-
 		for (Entry<String, Double> entry : nameSalaryMap.entrySet()) {
 			System.out.println("**** Emp name : " + entry.getKey() + " , salary: " + entry.getValue());
 		}
@@ -98,7 +88,12 @@ public class EmployeeQueryMgmt {
 		Map<String, Optional<Employee>> maxSalaryEmpInEachdept = employeeList.stream()
 				.collect(Collectors.groupingBy(Employee::getDepartment,
 						Collectors.reducing(BinaryOperator.maxBy(Comparator.comparing(Employee::getSalary)))));
-		for (Entry<String, Optional<Employee>> entry : maxSalaryEmpInEachdept.entrySet()) {
+
+        maxSalaryEmpInEachdept = employeeList.stream()
+                .collect(Collectors.groupingBy(Employee::getDepartment,
+                        Collectors.maxBy(Comparator.comparing(Employee::getSalary))));
+
+        for (Entry<String, Optional<Employee>> entry : maxSalaryEmpInEachdept.entrySet()) {
 			System.out.println(
 					"**** maxSalary Emp In Each dept name : " + entry.getKey() + " , emp: " + entry.getValue());
 		}
@@ -106,14 +101,41 @@ public class EmployeeQueryMgmt {
         // Get the details of highest paid employee in each department
 		// approch2
 		Map<String, Employee> maxSalaryEmpInEachdept1 = employeeList.stream()
-				.collect(Collectors.groupingBy(
-						Employee::getDepartment, 
-						Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary)), 
-								Optional::get)));
+				.collect(Collectors.groupingBy(Employee::getDepartment,
+						Collectors.collectingAndThen(
+                            Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary)),
+                            Optional::get)));
+        maxSalaryEmpInEachdept1 =
+                employeeList.stream()
+                        .collect(Collectors.toMap(
+                                Employee::getDepartment,
+                                e -> e,
+                                BinaryOperator.maxBy(Comparator.comparingDouble(Employee::getSalary))
+                        ));
+
+       maxSalaryEmpInEachdept1 = employeeList.stream()
+                .collect(Collectors.groupingBy(Employee::getDepartment,
+                        Collectors.collectingAndThen(
+                            Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary)),
+            opt -> opt.orElse(null))));
+
 		for (Entry<String, Employee> entry : maxSalaryEmpInEachdept1.entrySet()) {
 			System.out.println(
 					"****2nd maxSalary Emp In Each dept name : " + entry.getKey() + " , emp: " + entry.getValue());
 		}
+
+        List<Employee> updateemployeeList = new ArrayList<>(employeeList);
+        updateemployeeList.add(new Employee(31, "Anuj Test", 31, "Male", "Product Development", 2012, 35700.0));
+
+        Map<String, List<Employee>> deptList1 = updateemployeeList.stream()
+                .collect(Collectors.groupingBy(Employee::getDepartment,
+                Collectors.collectingAndThen(Collectors.toList(),
+                        list-> {
+                        double max = list.stream().mapToDouble(Employee::getSalary).max().orElse(0);
+                        return list.stream().filter(e -> e.getSalary() == max)
+                                .collect(Collectors.toList());
+                    })
+                ));
 
         // Get the names of all employees in each department
 		Map<String, List<String>> deptNameList = employeeList.stream().collect(Collectors
@@ -125,7 +147,6 @@ public class EmployeeQueryMgmt {
 
 		avgSalaryOfDepartments.keySet().forEach(System.out::println);
 		Set<Entry<String, Double>> entrySet = avgSalaryOfDepartments.entrySet();
-
 		for (Entry<String, Double> entry : entrySet) {
 			System.out.println(entry.getKey() + " : " + entry.getValue());
 		}
@@ -137,7 +158,6 @@ public class EmployeeQueryMgmt {
                 .collect(Collectors.minBy(Comparator.comparingInt(Employee::getAge)));
 
         Employee youngestMaleEmployeeInProductDevelopment = youngestMaleEmployeeInProductDevelopmentWrapper.get();
-
         System.out.println(" Youngest Male Employe ID : " + youngestMaleEmployeeInProductDevelopment.getId()
 				+ " Name : " + youngestMaleEmployeeInProductDevelopment.getName());
 
@@ -147,9 +167,7 @@ public class EmployeeQueryMgmt {
             .min(Comparator.comparingInt(Employee::getYearOfJoining)).stream().findFirst();
 		Employee seniorMostEmployee = seniorMostEmployeeWrapper.get();
 
-		System.out.println(
-				"Senior Most Employee ID : " + seniorMostEmployee.getId() + " Name : " + seniorMostEmployee.getName());
-
+		System.out.println("Senior Most Employee ID : " + seniorMostEmployee.getId() + " Name : " + seniorMostEmployee.getName());
 
         // Get the average salary and total salary of the whole organization
         DoubleSummaryStatistics employeeSalaryStatistics = employeeList.stream()
@@ -157,7 +175,7 @@ public class EmployeeQueryMgmt {
 
 		System.out.println("Average Salary: " + employeeSalaryStatistics.getAverage());
 		System.out.println("Total Salary: " + employeeSalaryStatistics.getSum());
-        System.out.println("Salary Statistics: " + employeeSalaryStatistics.toString());
+        System.out.println("Salary Statistics: " + employeeSalaryStatistics);
 
         // Get the details of employees who have joined in the year 2015 and above and are older than 30 years, then group them by their department
         // Top 2 Salaries Per Department (After Filter)
@@ -186,17 +204,25 @@ public class EmployeeQueryMgmt {
         // Step 2: Find employees with minimum age in each department
         Map<String, List<Employee>> minAgeByDept = employeesByDept.entrySet().stream()
                 .collect(Collectors.toMap(
-                        Entry::getKey,
-                        entry -> {
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .collect(Collectors.collectingAndThen(
+                                        Collectors.groupingBy(Employee::getAge),
+                                        ageMap -> {
+                                            int minAge = Collections.min(ageMap.keySet());
+                                            return ageMap.get(minAge);
+                                        }
+                                ))
+                       /* entry -> {
                             List<Employee> empList = entry.getValue();
                             int minAge = empList.stream()
                                     .mapToInt(Employee::getAge)
                                     .min()
-                                    .orElse(Integer.MAX_VALUE);
+                                    .orElse();
                             return empList.stream()
                                     .filter(e -> e.getAge() == minAge)
                                     .collect(Collectors.toList());
-                        }
+                        }*/
                 ));
 
         for( Entry<String, List<Employee>> entry : minAgeByDept.entrySet()) {
@@ -206,7 +232,7 @@ public class EmployeeQueryMgmt {
             }
         }
 
-        // Second Highest Salary in Each Department
+        // Second-Highest Salary in Each Department
         Map<String, Optional<Employee>> secondHighest = employeeList.stream().collect(Collectors.groupingBy(
                 Employee::getDepartment,  Collectors.collectingAndThen(
                         Collectors.toList(), list -> list.stream()
@@ -250,6 +276,11 @@ public class EmployeeQueryMgmt {
             .skip(n - 1)
             .findFirst()
             .ifPresent(System.out::println);
+
+        List<String> employeeNames = employeeList.stream()
+                .filter(e -> e.getSalary()>50000)
+                .map(Employee::getName)
+                .toList();
 
 
 	}

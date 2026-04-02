@@ -86,7 +86,13 @@ public class Main {
                 TimeUnit.SECONDS, // time unit
                 new LinkedBlockingQueue<>(2) // work queue
         );
-        
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+
+        // CallerRunsPolicy : Task ko submit karne wale thread execute karta hai instead of pool. No exception thrown.
+        // DiscardPolicy  : Task silently ignore kar diya jata hai, no exception.
+        // DiscardOldestPolicy : Oldest task ko discard kar diya jata hai, new task submit ho jata hai. No exception.
+        // AbortPolicy : Default hota hai. Task submit karne par RejectedExecutionException throw hota hai.
+
      // Submit tasks
         for (int i = 1; i <= 6; i++) {
             final int taskNumber = i;
@@ -98,7 +104,7 @@ public class Main {
         // end ThreadPoolExecutor program
 
         ExecutorService executors = Executors.newFixedThreadPool(4);
-       // executors = Executors.newSingleThreadExecutor();
+       // executors = Executors.newSingleThreadExecutor();  // Guaranteed sequential , Automatically replaces dead thread
         executors = Executors.newCachedThreadPool();
         CyclicBarrier cyclicBarrier = new CyclicBarrier(5);
         executors.submit(new Service1(cyclicBarrier));
@@ -121,14 +127,15 @@ public class Main {
 
         try {
             CountDownLatch lock = new CountDownLatch(3);
-
             scheduledExecutorService = Executors.newScheduledThreadPool(2);
+
             ScheduledFuture<?> future = scheduledExecutorService.scheduleAtFixedRate(() -> {
                 System.out.println("Hello World");
                 lock.countDown();
             }, 10, 10, TimeUnit.MILLISECONDS);
 
-            lock.await(10, TimeUnit.MILLISECONDS);
+         //   lock.await(10, TimeUnit.MILLISECONDS);
+            lock.await();  // // wait until latch = 0
             future.cancel(true);
             scheduledExecutorService.shutdown();
             System.out.println("Finished");
