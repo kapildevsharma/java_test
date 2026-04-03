@@ -102,14 +102,10 @@ public class LargestPairSum {
         for (int index = 0; index < arr.length; index++) {
             currSum  += arr[index];
 
-            if(currSum == sum) {
-                System.out.println("Subarray 0 to " + index);
-            }
-
             if (prefixSumMap.containsKey(currSum - sum)) {
                 int start = prefixSumMap.get(currSum - sum) + 1;
-                System.out.println("Subarray " + ( prefixSumMap.get(currSum - sum) + 1 ) + " to " + index);
-                System.out.println("Subarray with sum " + sum + " found: " +
+                System.out.println("findSubarrayWithSum, Subarray " + ( prefixSumMap.get(currSum - sum) + 1 ) + " to " + index);
+                System.out.println("findSubarrayWithSum, Subarray with sum " + sum + " found: " +
                         Arrays.toString(Arrays.copyOfRange(arr, start, index + 1)));
                 return;
             }
@@ -117,9 +113,33 @@ public class LargestPairSum {
             prefixSumMap.putIfAbsent(currSum , index);
         }
 
-        System.out.println("No subarray with sum " + sum + " found.");
+        System.out.println("findSubarrayWithSum, No subarray with sum " + sum + " found.");
     }
 
+    public static void findSubarraySlidingWindow(int[] arr, int target) {
+        int start = 0, currSum = 0;
+        boolean found = false;
+
+        for (int end = 0; end < arr.length; end++) {
+            currSum += arr[end];
+
+            while (currSum > target && start < end) {
+                currSum -= arr[start++];
+            }
+
+            if (currSum == target) {
+                System.out.println("findSubarraySlidingWindow, Subarray " + start + " to " + end);
+                found = true;
+                System.out.println("findSubarraySlidingWindow, Subarray with sum " + target + " found: " +
+                        Arrays.toString(Arrays.copyOfRange(arr, start, end + 1)));
+                return;
+            }
+        }
+
+        if (!found) {
+            System.out.println("No subarray found");
+        }
+    }
 	public static void main(String[] args) {
 
 		int[] arr = new int[] {5, 9, 7, 11};
@@ -144,12 +164,17 @@ public class LargestPairSum {
         System.out.println("----Finding max sum with start and end index----");
         findMaxSumWithStartEndIndex(new int[] {-2, -3, 4, -1, -2, 1, 5, -3});
 
-        arr = new int[]{3, 4, -7, 1, 3, 3, 1, -4};
+        arr = new int[]{3, -7, 4, 1, 3, 3, 1, -4};
         int sum = 7;
         findSubarrayWithSum(arr, sum);
-        arr = new int[] {1, 4, 20, 3, 10, 5};
-        int target = 33;
 
+        arr = new int[] {1, -4, 20, 3, 10, 5};
+        int target = 33;
+        findSubarrayWithSum(arr, target);
+
+        arr = new int[] {1, 4, 20, 3, 10, 5};
+        target = 13;
+        findSubarraySlidingWindow(arr, target);
         findSubarrays(arr, target);
         testZonedDateTime();
 
