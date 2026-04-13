@@ -238,23 +238,25 @@ public class Java17 {
 		  = CompletableFuture.supplyAsync(() -> "Hello", executor);
 		System.out.println("completableFuture--> " + completableFuture.get());
 
+        // Transform result = thenApply
 		CompletableFuture<String> future = completableFuture
 				.thenApply(s -> s + " Kapil");
 		System.out.println("completableFuture thenApply --> " + future.get());
 		
 		CompletableFuture<Void> future1 = future
-				  .thenAccept(s -> System.out.println("Computation returned: " + s))
+				  .thenAccept(s -> System.out.println("Computation returned: " + s))  // Consume result (no return)
 				  .thenRun(() -> System.out.println("Computation finished"));
 
-		System.out.println("completableFuture accept then run--> " + future1.get());
+		System.out.println("completableFuture accept then run --> " + future1.get());
 		
 		CompletableFuture<String> future2 = completableFuture.thenApply(s -> s + " Good Morning");
-		CompletableFuture<String> combinedFuture = future.thenCombine(
+		CompletableFuture<String> combinedFuture = future.thenCombine( // Combine two futures
       		future2, (m1, m2) -> m1 + " " + m2);
 		System.out.println("completableFuture thenCombine  "+ combinedFuture.join());
-		
-		CompletableFuture<Integer> resultFuture 
-        = CompletableFuture.supplyAsync(() -> 10 / 0)   
+		// join() : wraps all exceptions in CompletionException, making it easier in streams or functional chaining.
+
+
+		CompletableFuture<Integer> resultFuture = CompletableFuture.supplyAsync(() -> 10 / 0)
                   .exceptionally(ex -> 0);
       // 0 - returned by exceptionally block 
 		System.out.println(resultFuture.get());
@@ -278,9 +280,21 @@ public class Java17 {
             });
 
         executor.shutdown();
+
+        List<CompletableFuture<Integer>> futures = List.of(
+                CompletableFuture.supplyAsync(() -> 1),
+                CompletableFuture.supplyAsync(() -> 2),
+                CompletableFuture.supplyAsync(() -> 3)
+        );
+
+        // get() requires try/catch inside the lambda, join() is unchecked
+        List<Integer> results = futures.stream()
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList());
+
+        System.out.println(results); // [1, 2, 3]
     }
-	
-	
+
 	private static void optionalValue(List<String> citylist) {
 		Optional<String> firstNameWithD = citylist.stream().filter(i -> i.contains("D")).findFirst();
         firstNameWithD.ifPresent(s -> System.out.println("find first Name contains with D =" + s));

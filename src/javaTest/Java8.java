@@ -7,6 +7,7 @@ import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Java8 {
@@ -246,6 +247,136 @@ public class Java8 {
 		}
 
         int[] arr = {1, 2, 3, -2, 5};
+        arr = new int[]{1, 1, 1, 3, 2, 2, 3};
+        // Occurrence of elements
+        Map<Integer, Long> mapOccurrence = Arrays.stream(arr).boxed()
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+        // Find duplicate elements
+        mapOccurrence.entrySet().stream().filter(e ->e.getValue()>1)
+            .map(Map.Entry::getKey)
+            .forEach(e -> System.out.println("Duplicate element in arr : " + e)) ;
+
+        // find  First Non Repeating Char
+        String testStr = "aabbccdeff";
+        Optional<Character> nonRepeatingChar = testStr.chars().mapToObj(c -> (char)c).collect(Collectors.groupingBy(e -> e, LinkedHashMap :: new, Collectors.counting()))
+        .entrySet().stream().filter(e -> e.getValue()==1).map(Map.Entry:: getKey).findFirst();
+        System.out.println("first non repeating character in string : "
+                + (nonRepeatingChar.isPresent()?nonRepeatingChar.get():"No non repeating character"));
+
+        HashMap<Character, Integer> linkedMap = new LinkedHashMap<Character, Integer>  ();
+        for(char c : testStr.toCharArray()){
+            linkedMap.put(c, linkedMap.getOrDefault(c, 0)+1);
+        }
+        for(char c: linkedMap.keySet()){
+            if(linkedMap.get(c)==1){
+                System.out.println("first non repeating character in string by using linkedHashMap : " + c);
+                break;
+            }
+        }
+
+        testStr = "the sky is blue";
+        String[] wordArr = testStr.split(" ");
+        StringBuilder sb = new StringBuilder();
+        for(int i = wordArr.length-1 ; i>=0 ; i--){
+            sb.append(wordArr[i]).append(" ");
+        }
+        System.out.println("reverse word in sentence : " + sb.toString().trim());
+        Collections.reverse(Arrays.asList(wordArr));
+        System.out.println("reverse word in sentence by using collection : " + String.join(" ",
+                    wordArr));
+        testStr = Arrays.stream(testStr.split(" ")).map(word -> new StringBuffer(word).reverse()).collect(Collectors.joining(" "));
+        System.out.println("reverse word in sentence by using collection : " + testStr);
+
+        // duplicate element in array
+        Set<Integer> uniqueValSet = new HashSet<>();
+        Set<Integer> duplicateValSet = new HashSet<>();
+        for(int n : arr){
+            if(!uniqueValSet.add(n)){
+                duplicateValSet.add(n);
+            }
+        }
+        duplicateValSet.forEach(e -> System.out.println("Duplicate element in arr by using set : " + e)) ;
+        // Replace duplicates with -1
+        uniqueValSet = new HashSet<>();
+        for(int n =0; n<arr.length ; n++){
+            if(!uniqueValSet.add(arr[n])){
+                arr[n] = -1; // mark duplicate element with -1
+            }
+        }
+
+        // Find largest and second-largest element in array
+        arr = new int[]{5,3,2,8,2,5};
+        int largest = Arrays.stream(arr).boxed().max(Integer::compareTo).orElseThrow();
+        int secondLargest = Arrays.stream(arr).boxed().distinct().sorted(Comparator.reverseOrder()).skip(2-1)
+                .findFirst().get();
+
+        System.out.println("largest : "+ largest + " secondLargest : "+ secondLargest);
+        largest = Integer.MIN_VALUE;
+        secondLargest = Integer.MIN_VALUE;
+        for(int n : arr){
+            if(n>largest){
+                secondLargest = largest;
+                largest = n;
+            }else if(n>secondLargest && n!=largest){
+                secondLargest = n;
+            }
+        }
+        System.out.println("largest : "+ largest + " secondLargest : "+ secondLargest);
+
+        // First missing positive integer
+        arr = new int[]{3,4,-1,1};
+        uniqueValSet = new HashSet<>();
+        for(int n : arr){
+            if(n>0)
+                uniqueValSet.add(n);
+        }
+        int missing = 1;
+        while(true){
+            if(!uniqueValSet.contains(missing)){
+                System.out.println("first missing positive integer : "+ missing);
+                break;
+            }
+            missing++;
+        }
+        System.out.println("first missing positive integer : "+ missing);
+
+        // Move zeros to beginning
+        arr = new int[]{0,5,1,0,7,0,2,0};
+
+        arr = IntStream.concat(Arrays.stream(arr).filter(i -> i==0),
+                Arrays.stream(arr).filter(i -> i!=0)
+                ).toArray();
+        System.out.println("after move zero to end : "+ Arrays.toString(arr));
+
+        arr = new int[]{0,5,1,0,7,0,2,0};
+        int  j = arr.length-1;
+        for(int i = 0 ; i< arr.length ; i++){
+            if (arr[i] != 0) {
+                arr[j--] = arr[i];
+            }
+        }
+        for(int i = j ; i>=0 ; i--){
+            arr[i] = 0;
+        }
+        System.out.println("after move zero to end : "+ Arrays.toString(arr));
+
+
+        String rearrangementStr = "era2 uoy3 woh1";
+        String[] rearrangeArr =rearrangementStr.split(" ");
+        String[] rearrangeArrRes = new String[rearrangeArr.length];
+        for(String s : rearrangeArr){
+            int pos = Integer.parseInt(String.valueOf(s.charAt(s.length()-1)));
+            rearrangeArrRes[pos-1] = s.substring(0, s.length()-1);
+        }
+
+        System.out.println("rearrangementStr : "+ Arrays.toString(rearrangeArr) +" rearrangeArrRes : "+ Arrays.toString(rearrangeArrRes));
+
+        rearrangementStr =  Arrays.stream(rearrangementStr.split(" ")).sorted(Comparator.comparingInt( str -> str.charAt(str.length()-1)))
+                .map(s -> s.substring(0, s.length()-1)).collect(Collectors.joining(" "));
+
+        System.out.println("rearrangementStr : "+ rearrangementStr);
+
         int X = 3;
         int res = Arrays.stream(arr)
                 .boxed()

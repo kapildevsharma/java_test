@@ -16,7 +16,7 @@ public class Singleton implements Cloneable, Serializable {
     public String s;
  
     // Constructor of this class
-    // Here private constructor is is used to restricted to this class itself
+    // Here private constructor is used to restricted to this class itself
     private Singleton()
     {
         s = "Hello I am a string part of Singleton class";
