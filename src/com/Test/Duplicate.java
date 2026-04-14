@@ -42,11 +42,11 @@ class Shubham {
 
 
 
-class Person implements  Cloneable{
+class PersonClone implements  Cloneable{
     private Long helloId;
     private String myName;
     private Address address;
-    public Person(Long helloId, String myName, Address address){
+    public PersonClone(Long helloId, String myName, Address address){
         this.helloId = helloId;
         this.myName = myName;
         this.address = address.clone();
@@ -80,11 +80,10 @@ class Person implements  Cloneable{
         return this.helloId + " " + this.myName;
     }
     @Override
-    public Person clone() {
+    public PersonClone clone() {
         try {
-            Person clone = (Person) super.clone();
+            PersonClone clone = (PersonClone) super.clone();
             clone.address = address.clone();
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
@@ -172,9 +171,9 @@ public class Duplicate {
         duplicateIds.forEach(System.out::println);
 
         Address addr = new Address(1, "Jaipur");
-        Person s1 = new Person(101L, "Test", addr);
+        PersonClone s1 = new PersonClone(101L, "Test", addr);
 
-        Person s2 = s1.clone();
+        PersonClone s2 = s1.clone();
 
         // Change cloned object
         Address a2 = s2.getAddress();
