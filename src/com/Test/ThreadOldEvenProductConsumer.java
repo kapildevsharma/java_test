@@ -50,7 +50,7 @@ class Consumer implements Runnable {
 	}
 }
 
-public class Threadexample {
+public class ThreadOldEvenProductConsumer {
 	public static void main(String[] args) throws InterruptedException {
 
 		Producer p = new Producer();
@@ -80,7 +80,16 @@ public class Threadexample {
         executor.shutdown();
         executor.awaitTermination(10, TimeUnit.SECONDS);
         executor.shutdownNow();
-	}
+
+        EvenOldPrinter printer = new EvenOldPrinter();
+        Thread oldNumberThread = new Thread(() -> printer.printOdd());
+        Thread evenNumberThread = new Thread(() -> printer.printEven());
+
+        oldNumberThread.start();
+        evenNumberThread.start();
+
+
+    }
 
 	// This class has a list, producer (adds items to list and consumer (removes items).
 	public static class PC {
@@ -135,4 +144,48 @@ public class Threadexample {
             }
         }
 	}
+}
+// Problem: Given two threads, print the numbers from 1 to 10.
+// A thread will print the odd numbers,
+// the other thread will print the even numbers.
+// Output: 1,2,3,4,5,6,7,8,9,10
+
+class EvenOldPrinter {
+    private int number = 1;
+    private final int MAX = 10;
+
+    public synchronized void printOdd() {
+        while (number <= MAX) {
+            if (number % 2 != 0) {
+                System.out.print(number + " ");
+                number++;
+                notify();
+            } else {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+
+        }
+        notifyAll(); // important to release any waiting thread
+    }
+
+    public synchronized void printEven() {
+        while (number <= MAX) {
+            if (number % 2 == 0) {
+                System.out.print(number + " ");
+                number++;
+                notify();
+            } else {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+        notifyAll(); // important to release any waiting thread
+    }
 }
