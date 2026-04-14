@@ -92,6 +92,36 @@ public class LargestPairSum {
         }
     }
 
+    // Finds ONLY FIRST subarray with sum = target
+    public static void findFirstSubarray(int[] arr, int target) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int prefixSum = 0;
+
+        map.put(0, -1); // handle subarray from index 0
+
+        for (int i = 0; i < arr.length; i++) {
+            prefixSum += arr[i];
+
+            if (map.containsKey(prefixSum - target)) {
+                int start = map.get(prefixSum - target) + 1;
+
+                System.out.println("Subarray found from "
+                        + start + " to " + i);
+
+                System.out.println(Arrays.toString(
+                        Arrays.copyOfRange(arr, start, i + 1)
+                ));
+                return;
+            }
+
+            // store only first occurrence
+            map.putIfAbsent(prefixSum, i);
+        }
+
+        System.out.println("No subarray found");
+    }
+
+
     // O(n) time, O(n) space.
     public static void findSubarrayWithSum(int[] arr, int sum) {
         System.out.println("Finding subarray with sum " + sum + " in arr[] "+ Arrays.toString(arr));

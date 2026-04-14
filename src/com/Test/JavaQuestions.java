@@ -209,13 +209,25 @@ public class JavaQuestions {
 
     public void printFibonacciSequence(int n){
         int a =0, b=1, c=1;
-        for(int i=0 ; i<n; i++){
-            System.out.print(a+ ",");
-            a = b;
-            b = c;
-            c = a + b;
+        if(n < 0) {
+            System.out.println("N cannot be negative");
+            return;
+        }
+
+        if(n == 0) System.out.println(a);
+        else if(n == 1) System.out.println(b);
+        else {
+            System.out.print(a + " " + b + " ");
+            for(int i=2;i<=n;i++) {
+                c = a + b;
+                System.out.print(c+" ");
+                a = b;
+                b = c;
+            }
         }
     }
+
+
 
     public boolean onlyOddNumbers(List<Integer> list) {
         /*for(int i : list){
